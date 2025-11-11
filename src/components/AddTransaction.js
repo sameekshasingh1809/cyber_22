@@ -7,24 +7,36 @@ export const AddTransaction = () => {
   const [category, setCategory] = useState('Other');
   const { addTransaction } = useContext(GlobalContext);
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
-    if (!text || !amount) return alert('Please enter both text and amount!');
+    // Validation
+    if (text.trim() === '' || amount === '') {
+      alert('Please enter both text and amount!');
+      return;
+    }
+
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) {
+      alert('Please enter a valid numeric amount!');
+      return;
+    }
 
     const newTransaction = {
       id: Math.floor(Math.random() * 100000000),
       text,
-      amount: +amount,
+      amount: parsedAmount,
       category,
       date: new Date().toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
-      })
+      }),
     };
 
     addTransaction(newTransaction);
+
+    // Reset form fields
     setText('');
     setAmount('');
     setCategory('Other');
@@ -33,26 +45,32 @@ export const AddTransaction = () => {
   return (
     <div>
       <h3>Add new transaction</h3>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} autoComplete="off">
         <div className="form-control">
           <label htmlFor="text">Text</label>
           <input
             type="text"
+            id="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter text..."
+            required
           />
         </div>
 
         <div className="form-control">
           <label htmlFor="amount">
-            Amount (negative - expense, positive - income)
+            Amount <br />
+            (negative - expense, positive - income)
           </label>
           <input
             type="number"
+            id="amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount..."
+            step="any"
+            required
           />
         </div>
 
@@ -71,8 +89,11 @@ export const AddTransaction = () => {
           </select>
         </div>
 
-        <button className="btn">Add transaction</button>
+        <button type="submit" className="btn">
+          Add transaction
+        </button>
       </form>
     </div>
   );
 };
+
