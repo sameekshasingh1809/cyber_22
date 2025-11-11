@@ -19,9 +19,17 @@ function AppContent() {
       <TransactionList />
       <AddTransaction />
 
-      <button className="clear-btn" onClick={clearAllTransactions}>
-        Clear All Transactions
-      </button>
+      <button
+        className="clear-btn"
+        onClick={() => {
+        if (window.confirm("Are you sure you want to clear all transactions?")) {
+          clearAllTransactions();
+        }
+      }}
+    >
+      Clear All Transactions
+</button>
+
     </div>
   );
 }
